@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>CKEditor 5 – Vue.js Component – development sample</title>
+	<style>
+		body {
+			max-width: 800px;
+			margin: 20px auto;
+		}
+
+		textarea {
+			width: 100%;
+			height: 100px;
+			font-family: monospace;
+		}
+	</style>
+</head>
+
+<body>
+	<script src="../node_modules/vue3/dist/vue.global.js"></script>
+	<script src="../node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+	<script src="../dist/ckeditor.js"></script>
+
+	<div id="app">
+		<h1>CKEditor 5 – Vue.js Component – development sample</h1>
+
+		<ckeditor
+			tag-name="textarea"
+			v-model="editorData"
+			:editor="editor"
+			:config="editorConfig"
+			:disabled="editorDisabled"
+			@input="onEditorInput"
+			@ready="onEditorReady"
+			@focus="onEditorFocus"
+			@blur="onEditorBlur"
+			@destroy="onEditorDestroy">
+		</ckeditor>
+		<button v-on:click="toggleEditorDisabled()">
+			{{ editorDisabled ? 'Enable' : 'Disable' }} editor
+		</button>
+		<button v-on:click="destroyApp()">Destroy the app</button>
+
+		<h2>Live editor data</h2>
+		<textarea v-model="editorData"></textarea>
+	</div>
+
+	<script>
+		const app = Vue.createApp(
+			{
+				data() {
+					return {
+						editor: ClassicEditor,
+						editorData: '<p>Hello world!</p>',
+						editorConfig: { toolbar: ['heading', '|', 'bold', 'italic'] },
+						editorDisabled: false
+					};
+				},
+				methods: {
+					toggleEditorDisabled() {
+						this.editorDisabled = !this.editorDisabled;
+					},
+					destroyApp() {
+						console.log(
+							'$destroy instance method is not available. ' +
+							'Users should no longer manually manage the lifecycle of individual Vue components. ' +
+							'See https://v3.vuejs.org/guide/migration/introduction.html#removed-apis'
+						)
+					},
+					onEditorReady(editor) {
+						console.log('Editor is ready.', { editor });
+					},
+					onEditorFocus(event, editor) {
+						console.log('Editor focused.', { event, editor });
+					},
+					onEditorBlur(event, editor) {
+						console.log('Editor blurred.', { event, editor });
+					},
+					onEditorInput(data, event, editor) {
+						console.log('Editor data input.', { event, editor, data });
+					},
+					onEditorDestroy(editor) {
+						console.log('Editor destroyed.', { editor });
+					}
+				}
+			}
+		)
+
+		app.use(CKEditor(Vue))
+		app.mount('#app');
+	</script>
+</body>
+
+</html>

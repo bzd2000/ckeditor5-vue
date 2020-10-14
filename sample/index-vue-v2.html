@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<title>CKEditor 5 – Vue.js Component – development sample</title>
@@ -16,8 +17,9 @@
 		}
 	</style>
 </head>
+
 <body>
-	<script src="../node_modules/vue/dist/vue.js"></script>
+	<script src="../node_modules/vue2/dist/vue.js"></script>
 	<script src="../node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
 	<script src="../dist/ckeditor.js"></script>
 
@@ -25,18 +27,17 @@
 		<h1>CKEditor 5 – Vue.js Component – development sample</h1>
 
 		<ckeditor
-			editor="classic"
 			tag-name="textarea"
 			v-model="editorData"
 			:editor="editor"
 			:config="editorConfig"
 			:disabled="editorDisabled"
+			@input="onEditorInput"
 			@ready="onEditorReady"
 			@focus="onEditorFocus"
 			@blur="onEditorBlur"
-			@input="onEditorInput"
-			@destroy="onEditorDestroy"
-		></ckeditor>
+			@destroy="onEditorDestroy">
+		</ckeditor>
 		<button v-on:click="toggleEditorDisabled()">
 			{{ editorDisabled ? 'Enable' : 'Disable' }} editor
 		</button>
@@ -47,24 +48,25 @@
 	</div>
 
 	<script>
-		Vue.use( CKEditor );
+		Vue.use( CKEditor( Vue ) );
 
-		const app = new Vue( {
+		new Vue( {
 			el: '#app',
-			data: {
-				editor: ClassicEditor,
-				editorData: '<p>Hello world!</p>',
-				editorConfig: { toolbar: [ 'heading', '|', 'bold', 'italic' ] },
-				editorDisabled: false
+			data() {
+				return {
+					editor: ClassicEditor,
+					editorData: '<p>Hello world!</p>',
+					editorConfig: { toolbar: ['heading', '|', 'bold', 'italic'] },
+					editorDisabled: false
+				};
 			},
 			methods: {
 				toggleEditorDisabled() {
 					this.editorDisabled = !this.editorDisabled;
 				},
 				destroyApp() {
-					app.$destroy();
+					this.$destroy();
 				},
-
 				onEditorReady( editor ) {
 					console.log( 'Editor is ready.', { editor } );
 				},
@@ -84,4 +86,5 @@
 		} );
 	</script>
 </body>
+
 </html>

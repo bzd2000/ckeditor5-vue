@@ -7,10 +7,10 @@
 
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
-import CKEditor from '../../src/plugin';
+import createCKEditorPlugin from '../../src/plugin';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-Vue.use( CKEditor );
+Vue.use( createCKEditorPlugin( Vue ) );
 
 describe( 'CKEditor plugin', () => {
 	describe( 'Vue.use()', () => {

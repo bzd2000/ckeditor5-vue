@@ -7,18 +7,24 @@
 
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
-import CKEditorComponent from '../src/ckeditor';
+import createCKEditorComponent from '../src/ckeditor';
+import { isLegacyVue } from '../src/plugin';
 import {
 	MockEditor,
 	ModelDocument,
 	ViewDocument
 } from './_utils/mockeditor';
 
+const CKEditorComponent = createCKEditorComponent( {
+	isLegacyVue: isLegacyVue( Vue ),
+	h: Vue.h
+} );
+
 describe( 'CKEditor Component', () => {
 	let sandbox, wrapper, vm;
 
 	beforeEach( () => {
-		( { wrapper, vm } = createComponent() );
+		( { wrapper, vm } = mountComponent() );
 
 		sandbox = sinon.createSandbox();
 	} );
@@ -34,7 +40,7 @@ describe( 'CKEditor Component', () => {
 
 	it( 'should call editor#create when initializing', async () => {
 		const stub = sandbox.stub( MockEditor, 'create' ).resolves( new MockEditor() );
-		const { wrapper } = createComponent();
+		const { wrapper } = mountComponent();
 
 		await Vue.nextTick();
 
@@ -44,7 +50,7 @@ describe( 'CKEditor Component', () => {
 
 	it( 'should call editor#destroy when destroying', async () => {
 		const stub = sandbox.stub( MockEditor.prototype, 'destroy' ).resolves();
-		const { wrapper, vm } = createComponent();
+		const { wrapper, vm } = mountComponent();
 
 		await Vue.nextTick();
 
@@ -59,7 +65,7 @@ describe( 'CKEditor Component', () => {
 
 		sandbox.stub( MockEditor, 'create' ).rejects( error );
 
-		const { wrapper } = createComponent();
+		const { wrapper } = mountComponent();
 
 		await timeout( 0 );
 
@@ -74,7 +80,7 @@ describe( 'CKEditor Component', () => {
 	describe( 'properties', () => {
 		describe( '#editor', () => {
 			it( 'should accept an editor constructor', async () => {
-				const { wrapper, vm } = createComponent( {
+				const { wrapper, vm } = mountComponent( {
 					editor: MockEditor
 				} );
 
@@ -87,15 +93,15 @@ describe( 'CKEditor Component', () => {
 			} );
 		} );
 
-		describe( '#value', () => {
+		describe( '#modelValue', () => {
 			it( 'should be defined', () => {
-				expect( vm.value ).to.equal( '' );
+				expect( vm.modelValue ).to.equal( '' );
 			} );
 
 			// See: https://github.com/ckeditor/ckeditor5-vue/issues/47.
 			it( 'should set the initial data', async () => {
-				const { wrapper, vm } = createComponent( {
-					value: 'foo'
+				const { wrapper, vm } = mountComponent( {
+					modelValue: 'foo'
 				} );
 
 				await Vue.nextTick();
@@ -113,7 +119,7 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should define the tag of the element', () => {
-				const { wrapper, vm } = createComponent( {
+				const { wrapper, vm } = mountComponent( {
 					tagName: 'textarea'
 				} );
 
@@ -129,7 +135,7 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should set the initial editor#isReadOnly', async () => {
-				const { wrapper, vm } = createComponent( {
+				const { wrapper, vm } = mountComponent( {
 					disabled: true
 				} );
 
@@ -146,7 +152,7 @@ describe( 'CKEditor Component', () => {
 			} );
 
 			it( 'should be set according to the initial editor#config', async () => {
-				const { wrapper, vm } = createComponent( {
+				const { wrapper, vm } = mountComponent( {
 					config: { foo: 'bar' }
 				} );
 
@@ -212,7 +218,7 @@ describe( 'CKEditor Component', () => {
 
 	describe( 'bindings', () => {
 		it( '#disabled should control editor#isReadOnly', async () => {
-			const { wrapper, vm } = createComponent( {
+			const { wrapper, vm } = mountComponent( {
 				disabled: true
 			} );
 
@@ -229,26 +235,26 @@ describe( 'CKEditor Component', () => {
 			wrapper.destroy();
 		} );
 
-		it( '#value should trigger editor#setData', async () => {
+		it( '#modelValue should trigger editor#setData', async () => {
 			await Vue.nextTick();
 
 			const spy = sandbox.spy( vm.$_instance, 'setData' );
-			wrapper.setProps( { value: 'foo' } );
+			wrapper.setProps( { modelValue: 'foo' } );
 
 			await Vue.nextTick();
 
-			wrapper.setProps( { value: 'bar' } );
+			wrapper.setProps( { modelValue: 'bar' } );
 
 			await Vue.nextTick();
 
 			sinon.assert.calledTwice( spy );
 
-			// Simulate typing: The #value changes but at the same time, the instance update
-			// its own data so instance.getData() and #value are immediately the same.
+			// Simulate typing: The #modelValue changes but at the same time, the instance update
+			// its own data so instance.getData() and #modelValue are immediately the same.
 			// Make sure instance.setData() is not called in this situation because it would destroy
 			// the selection.
 			wrapper.vm.$_lastEditorData = 'barq';
-			wrapper.setProps( { value: 'barq' } );
+			wrapper.setProps( { modelValue: 'barq' } );
 
 			await Vue.nextTick();
 
@@ -267,7 +273,7 @@ describe( 'CKEditor Component', () => {
 		} );
 
 		it( 'should emit #destroy when the editor is destroyed', async () => {
-			const { wrapper, vm } = createComponent();
+			const { wrapper, vm } = mountComponent();
 
 			await Vue.nextTick();
 
@@ -373,7 +379,7 @@ describe( 'CKEditor Component', () => {
 		} );
 	} );
 
-	function createComponent( props ) {
+	function mountComponent( props ) {
 		const wrapper = mount( CKEditorComponent, {
 			propsData: Object.assign( {}, {
 				editor: MockEditor
@@ -386,4 +392,29 @@ describe( 'CKEditor Component', () => {
 	function timeout( delay ) {
 		return new Promise( resolve => setTimeout( resolve, delay ) );
 	}
+} );
+
+describe( 'isLegacyVue() helper', () => {
+	it( 'should return true for versions < 3.0.0', () => {
+		expect( isLegacyVue( { version: '0.0.1' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '0.0.1-alpha.1' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '0.0.1-beta.2' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '0.0.1-rc.3' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '0.1.1' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '1.1.1' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '2.0.0' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '2.99.99' } ) ).to.be.true;
+		expect( isLegacyVue( { version: '3.0.0-rc.99' } ) ).to.be.true;
+	} );
+
+	it( 'should return false for versions >= 3.0.0', () => {
+		expect( isLegacyVue( { version: '3.0.0' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '3.0.1' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '3.0.1-alpha.1' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '3.0.1-beta.2' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '3.0.1-rc.3' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '3.99.99' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '4.0.0' } ) ).to.be.false;
+		expect( isLegacyVue( { version: '99.99.99' } ) ).to.be.false;
+	} );
 } );

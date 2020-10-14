@@ -5,18 +5,20 @@
 
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
-import CKEditor from '../../src/plugin';
+import createCKEditorPlugin from '../../src/plugin';
 import { MockEditor } from '../_utils/mockeditor';
 
 class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
+
+const CKEditorPlugin = createCKEditorPlugin( Vue );
 
 describe( 'CKEditor plugin', () => {
 	it( 'should work when the component is used locally', async () => {
 		const wrapperFoo = mount( {
 			template: '<ckeditor :editor="editorType"></ckeditor>',
 			components: {
-				ckeditor: CKEditor.component
+				ckeditor: CKEditorPlugin.component
 			}
 		}, {
 			data: () => {
@@ -29,7 +31,7 @@ describe( 'CKEditor plugin', () => {
 		const wrapperBar = mount( {
 			template: '<ckeditor :editor="editorType"></ckeditor>',
 			components: {
-				ckeditor: CKEditor.component
+				ckeditor: CKEditorPlugin.component
 			}
 		}, {
 			data: () => {
