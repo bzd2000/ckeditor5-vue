@@ -68,7 +68,7 @@
     "release": "node ./scripts/release.js",
     "pretest": "npm link node_modules/vue-test-utils-v2 && npm link node_modules/vue-v2",
     "test": "node ./scripts/test.js",
-    "coverage": "node ./scripts/test.js --coverage"
+    "coverage": "npm run test -- --coverage"
   },
   "repository": {
     "type": "git",
