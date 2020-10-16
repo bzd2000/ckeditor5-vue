@@ -11,6 +11,8 @@ const path = require( 'path' );
 
 const options = parseArguments( process.argv.slice( 2 ) );
 
+const webpackConfigForVue = require( `./webpackconfig-vue-v${ options.vue }` );
+
 module.exports = function getKarmaConfig() {
 	const basePath = process.cwd();
 	const coverageDir = path.join( basePath, 'coverage' );
@@ -31,11 +33,7 @@ module.exports = function getKarmaConfig() {
 			]
 		},
 
-		resolve: {
-			alias: {
-				'vue$': 'vue/dist/vue.esm-bundler.js'
-			}
-		}
+		...webpackConfigForVue
 	};
 
 	const karmaConfig = {
@@ -192,15 +190,17 @@ function parseArguments( args ) {
 			c: 'coverage',
 			r: 'reporter',
 			s: 'source-map',
+			v: 'vue',
 			w: 'watch'
 		},
 
 		default: {
 			browsers: 'Chrome',
-			reporter: 'mocha',
-			watch: false,
 			coverage: false,
-			'source-map': false
+			reporter: 'mocha',
+			'source-map': false,
+			vue: 2,
+			watch: false
 		}
 	};
 

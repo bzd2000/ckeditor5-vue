@@ -12,6 +12,8 @@
 // which produces invalid config.
 // See: https://github.com/ckeditor/ckeditor5-react/issues/25
 
+const options = parseArguments( process.argv.slice( 2 ) );
+
 const getKarmaConfig = require( './utils/getkarmaconfig' );
 const { Server: KarmaServer } = require( 'karma' );
 
@@ -19,4 +21,21 @@ const config = getKarmaConfig();
 
 const server = new KarmaServer( config );
 
+console.log( `
+╓───┄                   ┄───╖
+║ Starting tests for Vue v${ options.vue } ║
+╙───┄                   ┄───╜
+` );
+
 server.start();
+
+function parseArguments( args ) {
+	return require( 'minimist' )( args, {
+		alias: {
+			v: 'vue'
+		},
+		default: {
+			vue: 2
+		}
+	} );
+}
