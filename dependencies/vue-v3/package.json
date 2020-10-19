@@ -1,4 +1,5 @@
 {
+  "description": "This package.json is only for providing Vue v3.x and corresponding Vue Test Utils for development purposes.",
   "devDependencies": {
     "@vue/test-utils": "^2.0.0-beta.6",
     "vue": "^3.0.1"

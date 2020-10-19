@@ -9,7 +9,15 @@ import { debounce } from 'lodash-es';
 
 const INPUT_EVENT_DEBOUNCE_WAIT = 300;
 
-export default function( { isLegacyVue, h } ) {
+/**
+ * Vue component creator.
+ *
+ * @param {Object} options
+ * @param {Boolean} options.isNextVue Informs if current Vue version is the next one (v3.x) or the previous one (v2.x).
+ * @param {Function} options.h Creates virtual DOM nodes (h stands for hyperscript). Only used for Vue v3.x.
+ * @returns {Object} Vue component.
+ */
+export default function( { isNextVue, h } ) {
 	return {
 		name: 'ckeditor',
 
@@ -89,7 +97,7 @@ export default function( { isLegacyVue, h } ) {
 				} );
 		},
 
-		[ isLegacyVue ? 'beforeDestroy' : 'beforeUnmount' ]() {
+		[ isNextVue ? 'beforeUnmount' : 'beforeDestroy' ]() {
 			if ( this.$_instance ) {
 				this.$_instance.destroy();
 				this.$_instance = null;

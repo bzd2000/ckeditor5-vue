@@ -3,17 +3,15 @@
  * For licensing, see LICENSE.md.
  */
 
-import * as VueModule from 'vue';
 import { mount } from '@vue/test-utils';
-import createCKEditorPlugin, { isLegacyVue } from '../../src/plugin';
+import createCKEditorPlugin from '../../src/plugin';
 import { MockEditor } from '../_utils/mockeditor';
+import { Vue, UNMOUNT_METHOD_NAME } from './../_utils/vueadapter';
 
 class FooEditor extends MockEditor {}
 class BarEditor extends MockEditor {}
 
-const Vue = VueModule.default || VueModule;
 const CKEditorPlugin = createCKEditorPlugin( Vue );
-const UNMOUNT_METHOD_NAME = isLegacyVue( Vue ) ? 'destroy' : 'unmount';
 
 describe( 'CKEditor plugin', () => {
 	it( 'should work when the component is used locally', async () => {

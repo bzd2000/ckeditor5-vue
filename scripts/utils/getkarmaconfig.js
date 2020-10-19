@@ -169,6 +169,7 @@ function getBrowsers( browsers ) {
  * @returns {Boolean} options.watch Whether to watch the files.
  * @returns {Boolean} options.coverage Whether to generate code coverage.
  * @returns {Boolean} options.sourceMap Whether to add source maps.
+ * @returns {Number} options.vue Desired Vue version for running test.
  */
 function parseArguments( args ) {
 	const minimist = require( 'minimist' );

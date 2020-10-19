@@ -14,12 +14,9 @@
 
 const options = parseArguments( process.argv.slice( 2 ) );
 
-const getKarmaConfig = require( './utils/getkarmaconfig' );
 const { Server: KarmaServer } = require( 'karma' );
-
-const config = getKarmaConfig();
-
-const server = new KarmaServer( config );
+const getKarmaConfig = require( './utils/getkarmaconfig' );
+const server = new KarmaServer( getKarmaConfig() );
 
 console.log( `
 ╓───┄                   ┄───╖
@@ -29,6 +26,13 @@ console.log( `
 
 server.start();
 
+/**
+ * Parses CLI arguments and options.
+ *
+ * @param {Array.<String>} args CLI arguments and options.
+ * @returns {Object} options
+ * @returns {Number} options.vue Desired Vue version for test run.
+ */
 function parseArguments( args ) {
 	return require( 'minimist' )( args, {
 		alias: {

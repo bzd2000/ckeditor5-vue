@@ -5,24 +5,16 @@
 
 /* global console, setTimeout */
 
-import * as VueModule from 'vue';
 import { mount } from '@vue/test-utils';
 import createCKEditorComponent from '../src/ckeditor';
-import { isLegacyVue } from '../src/plugin';
 import {
 	MockEditor,
 	ModelDocument,
 	ViewDocument
 } from './_utils/mockeditor';
+import { Vue, isNextVue, PROPS_KEY_NAME, UNMOUNT_METHOD_NAME } from './_utils/vueadapter';
 
-const Vue = VueModule.default || VueModule;
-const PROPS_KEY_NAME = isLegacyVue( Vue ) ? 'propsData' : 'props';
-const UNMOUNT_METHOD_NAME = isLegacyVue( Vue ) ? 'destroy' : 'unmount';
-
-const CKEditorComponent = createCKEditorComponent( {
-	isLegacyVue: isLegacyVue( Vue ),
-	h: Vue.h
-} );
+const CKEditorComponent = createCKEditorComponent( { isNextVue, h: Vue.h } );
 
 describe( 'CKEditor Component', () => {
 	let sandbox;
