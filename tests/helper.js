@@ -7,6 +7,9 @@ import { isNextVue } from '../src/helper';
 
 describe( 'isNextVue() helper', () => {
 	it( 'should return false for versions < 3.0.0', () => {
+		expect( isNextVue() ).to.be.false;
+		expect( isNextVue( {} ) ).to.be.false;
+		expect( isNextVue( { notValidProperty: 42 } ) ).to.be.false;
 		expect( isNextVue( { version: 0 } ) ).to.be.false;
 		expect( isNextVue( { version: 1 } ) ).to.be.false;
 		expect( isNextVue( { version: 2 } ) ).to.be.false;
